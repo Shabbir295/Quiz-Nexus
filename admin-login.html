@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Meta Tag -->
+<meta name="theme-color" content="#0b1a0e">
+    <!-- Prevent page zoom and scroll issues -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- Theme Color for Mobile -->
+<meta name="theme-color" content="#00e676">
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login · QuizNexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- ===== FAVICON - Browser Tab Logo ===== -->
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/logo.png">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 20%, #132b17, #051007);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e2f0e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            width: 100%;
+        }
+        .glass {
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        .glass:hover { border-color: rgba(0, 230, 118, 0.3); }
+        .auth-card {
+            max-width: 440px;
+            width: 100%;
+            padding: 40px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .mini-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .logo-icon {
+            background: #ff6b35;
+            color: #0b1a0e;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .logo-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #e2f0e5;
+        }
+        .logo-name .accent { color: #ff6b35; }
+        .auth-header h2 { font-size: 1.8rem; font-weight: 700; }
+        .auth-subtitle { color: #8fb89a; margin-top: 4px; }
+        .input-group {
+            position: relative;
+            margin: 14px 0;
+        }
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8fb89a;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1.5px solid rgba(45, 74, 52, 0.5);
+            border-radius: 16px;
+            color: #e2f0e5;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.15);
+        }
+        .input-group .toggle-pw {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #8fb89a;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+        }
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            padding-left: 16px;
+            min-height: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #ff6b35, #ff4500);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 24px rgba(255, 107, 53, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 8px 36px rgba(255, 107, 53, 0.5); }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #8fb89a;
+            font-size: 0.95rem;
+        }
+        .link-accent {
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .link-accent:hover { text-shadow: 0 0 20px #ff6b35; }
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        .toast {
+            background: rgba(20, 40, 25, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 4px solid #ff6b35;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #e2f0e5;
+            margin-top: 10px;
+            animation: slideUp 0.4s ease;
+        }
+        .toast.error { border-left-color: #ff4444; }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .page-enter { animation: fadeScale 0.6s ease; }
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.92); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="auth-container page-enter">
+        <div class="glass auth-card admin-auth">
+            <div class="auth-header">
+                <!-- ===== BIG LOGO - 140px ===== -->
+                <img src="assets/images/logo.png" alt="QuizNexus" style="width:140px; height:140px; object-fit:contain; display:block; margin:0 auto 16px;">
+                <div class="mini-logo">
+                    <span class="logo-icon">A</span>
+                    <span class="logo-name">Admin <span class="accent">Panel</span></span>
+                </div>
+                <h2>Administrator Access</h2>
+                <p class="auth-subtitle">Enter the master password</p>
+            </div>
+
+            <form id="adminLoginForm" onsubmit="event.preventDefault(); handleAdminLogin();">
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="adminPassword" placeholder="Admin Password" required>
+                    <button type="button" class="toggle-pw" onclick="togglePassword('adminPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <div class="error-msg" id="adminError"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-shield-alt"></i> Access Dashboard
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p><a href="login.html" class="link-accent"><i class="fas fa-arrow-left"></i> Back to User Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        function redirectTo(page) { window.location.href = page; }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+            const icon = input.parentElement?.querySelector('.toggle-pw i');
+            if (icon) {
+                icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            }
+        }
+
+        function handleAdminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('adminError');
+
+            if (password === 'Dominator_7&') {
+                localStorage.setItem('quiznexus_admin_session', 'true');
+                showToast('Welcome Admin! 🛡️');
+                setTimeout(() => redirectTo('admin-dashboard.html'), 400);
+            } else {
+                errorDiv.textContent = '✗ Invalid admin password!';
+                document.getElementById('adminPassword').style.borderColor = '#ff4444';
+                setTimeout(() => {
+                    errorDiv.textContent = '';
+                    document.getElementById('adminPassword').style.borderColor = '';
+                }, 3000);
+            }
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 230, 118, ${p.opacity})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticles();
+        });
+
+        window.handleAdminLogin = handleAdminLogin;
+        window.togglePassword = togglePassword;
+    </script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Meta Tag -->
+<meta name="theme-color" content="#0b1a0e">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users · Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .users-container { padding: 24px; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            padding: 16px 20px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .stat-card .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .stat-card .icon.blue { background: rgba(79,195,247,0.15); color: #4fc3f7; }
+        .stat-card .icon.green { background: rgba(0,230,118,0.15); color: #00e676; }
+        .stat-card .icon.red { background: rgba(255,68,68,0.15); color: #ff4444; }
+        .stat-card .icon.gold { background: rgba(255,215,0,0.15); color: #ffd700; }
+        .stat-card .info .number { font-size: 1.4rem; font-weight: 700; }
+        .stat-card .info .label { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px 16px 8px 40px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-input);
+            border-radius: 60px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+        .filter-select {
+            padding: 8px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-input);
+            border-radius: 60px;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            min-width: 120px;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .action-btn.primary {
+            background: linear-gradient(145deg, #00c853, #00e676);
+            color: #0b1a0e;
+        }
+        .action-btn.primary:hover { transform: translateY(-2px); }
+        .action-btn.glass {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+        }
+        .action-btn.glass:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+        .table-wrapper {
+            border-radius: 16px;
+            overflow-x: auto;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-glass);
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 700px;
+        }
+        .users-table thead {
+            background: rgba(0,0,0,0.15);
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .users-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .users-table tbody td { padding: 10px 14px; vertical-align: middle; }
+        .users-table tbody tr { border-bottom: 1px solid rgba(0,255,100,0.04); }
+        .users-table tbody tr:hover { background: rgba(0,230,118,0.04); }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-glass);
+        }
+        .user-info .name { font-weight: 600; font-size: 0.9rem; }
+        .user-info .email { font-size: 0.7rem; color: var(--text-secondary); }
+
+        .password-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            background: rgba(0,230,118,0.06);
+            padding: 2px 12px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .password-cell:hover { border-color: var(--accent); }
+
+        .badge {
+            font-size: 0.6rem;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge.active { background: rgba(0,230,118,0.12); color: #00e676; }
+        .badge.banned { background: rgba(255,68,68,0.12); color: #ff4444; }
+        .badge.admin { background: rgba(255,215,0,0.12); color: #ffd700; }
+
+        /* ===== BUTTONS - YAHAN SE BUTTONS AA RAHE HAIN ===== */
+        .table-actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-icon {
+            padding: 4px 10px;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-icon:hover { transform: translateY(-2px); }
+        .btn-icon.view:hover { border-color: #4fc3f7; color: #4fc3f7; }
+        .btn-icon.edit:hover { border-color: #ffd700; color: #ffd700; }
+        .btn-icon.reset:hover { border-color: #ff9800; color: #ff9800; }
+        .btn-icon.ban:hover { border-color: #ff4444; color: #ff4444; }
+        .btn-icon.unban:hover { border-color: #00e676; color: #00e676; }
+        .btn-icon.delete:hover { border-color: #ff4444; color: #ff4444; }
+        .btn-icon.protected { opacity: 0.4; cursor: not-allowed; }
+
+        @media (max-width: 768px) {
+            .users-container { padding: 16px; }
+            .stats-row { grid-template-columns: repeat(2,1fr); gap: 10px; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; }
+        }
+        #particles-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass admin-sidebar">
+            <div class="sidebar-brand">
+                <img src="assets/images/logo.png" alt="QuizNexus" style="width:50px;height:50px;object-fit:contain;border-radius:12px;">
+                <span class="brand-text">Admin<span class="accent">Panel</span></span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="users.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+                <a href="manage-quiz.html" class="nav-item"><i class="fas fa-puzzle-piece"></i> Quizzes</a>
+                <a href="manage-quiz.html" class="nav-item"><i class="fas fa-database"></i> Question Bank</a>
+                <a href="leaderboard.html" class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>👥 User Management</h1>
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                </div>
+            </header>
+
+            <div class="users-container glass">
+                <!-- Stats -->
+                <div class="stats-row" id="statsRow">
+                    <div class="stat-card">
+                        <div class="icon blue"><i class="fas fa-users"></i></div>
+                        <div class="info"><div class="number" id="totalUsers">0</div><div class="label">Total Users</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon green"><i class="fas fa-user-check"></i></div>
+                        <div class="info"><div class="number" id="activeUsers">0</div><div class="label">Active</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon red"><i class="fas fa-user-slash"></i></div>
+                        <div class="info"><div class="number" id="bannedUsers">0</div><div class="label">Banned</div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon gold"><i class="fas fa-user-cog"></i></div>
+                        <div class="info"><div class="number" id="adminUsers">0</div><div class="label">Admins</div></div>
+                    </div>
+                </div>
+
+                <!-- Top Bar -->
+                <div class="top-bar">
+                    <div class="left" style="display:flex;gap:10px;flex-wrap:wrap;flex:1;">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchUsers" placeholder="Search users..." oninput="searchUsers(this.value)">
+                        </div>
+                        <select id="statusFilter" class="filter-select" onchange="filterUsers()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="banned">Banned</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="right" style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="action-btn glass" onclick="exportUsersJSON()"><i class="fas fa-file-export"></i> Export</button>
+                        <button class="action-btn primary" onclick="addUser()"><i class="fas fa-user-plus"></i> Add User</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Roll No</th>
+                                <th>Email</th>
+                                <th>Password</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th style="text-align:center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================================
+        //  DATABASE
+        // ============================================================
+        const DB = {
+            USERS: 'quiznexus_users',
+            RESULTS: 'quiznexus_results',
+            SETTINGS: 'quiznexus_settings',
+            ADMIN_SESSION: 'quiznexus_admin_session',
+            getUsers() { return JSON.parse(localStorage.getItem(this.USERS)) || []; },
+            saveUsers(users) { localStorage.setItem(this.USERS, JSON.stringify(users)); },
+            getUserById(id) { return this.getUsers().find(u => u.id === id) || null; },
+            getResults() { return JSON.parse(localStorage.getItem(this.RESULTS)) || []; },
+            getResultsByUserId(userId) { return this.getResults().filter(r => r.userId === userId); },
+            updateUser(id, updates) {
+                const users = this.getUsers();
+                const index = users.findIndex(u => u.id === id);
+                if (index === -1) return null;
+                users[index] = { ...users[index], ...updates };
+                this.saveUsers(users);
+                return users[index];
+            },
+            deleteUser(id) {
+                let users = this.getUsers();
+                users = users.filter(u => u.id !== id);
+                this.saveUsers(users);
+                return users;
+            },
+            getSettings() { return JSON.parse(localStorage.getItem(this.SETTINGS)) || { theme: 'dark' }; },
+            saveSettings(settings) { localStorage.setItem(this.SETTINGS, JSON.stringify(settings)); }
+        };
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        function showToast(message, type) {
+            type = type || 'success';
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                var newContainer = document.createElement('div');
+                newContainer.id = 'toastContainer';
+                newContainer.className = 'toast-container';
+                document.body.appendChild(newContainer);
+                return showToast(message, type);
+            }
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = '<i class="fas ' + icon + '"></i><span>' + message + '</span>';
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.classList.add('toast-exit');
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 3500);
+        }
+
+        function redirectTo(page) { window.location.href = page; }
+
+        function logout() {
+            localStorage.removeItem('quiznexus_admin_session');
+            localStorage.removeItem('quiznexus_current_user');
+            showToast('Logged out');
+            setTimeout(function() { redirectTo('login.html'); }, 400);
+        }
+
+        function toggleTheme() {
+            var settings = DB.getSettings();
+            var newTheme = settings.theme === 'dark' ? 'light' : 'dark';
+            settings.theme = newTheme;
+            DB.saveSettings(settings);
+            applyTheme(newTheme);
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-toggle i').forEach(function(icon) {
+                icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            });
+            document.body.style.background = theme === 'light' 
+                ? 'radial-gradient(ellipse at 20% 20%, #e8f5e9, #c8e6c9)' 
+                : 'radial-gradient(circle at 20% 20%, #132b17, #051007)';
+        }
+
+        // ============================================================
+        //  USERS FUNCTIONS
+        // ============================================================
+        var allUsers = [];
+
+        function loadUsers() {
+            allUsers = DB.getUsers();
+            updateStats(allUsers);
+            renderUsers(allUsers);
+        }
+
+        function updateStats(users) {
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(function(u) { return !u.isBanned && u.rollNumber !== 'ADMIN001'; }).length;
+            document.getElementById('bannedUsers').textContent = users.filter(function(u) { return u.isBanned; }).length;
+            document.getElementById('adminUsers').textContent = users.filter(function(u) { return u.rollNumber === 'ADMIN001' || u.isAdmin; }).length;
+        }
+
+        // ============================================================
+        //  RENDER USERS - BUTTONS YAHAN BAN RAHE HAIN
+        // ============================================================
+        function renderUsers(users) {
+            var tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-secondary);">No users found</td></tr>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < users.length; i++) {
+                var user = users[i];
+                var isAdmin = user.rollNumber === 'ADMIN001' || user.isAdmin;
+                
+                var statusBadge = '';
+                if (isAdmin) {
+                    statusBadge = '<span class="badge admin">👑 Admin</span>';
+                } else if (user.isBanned) {
+                    statusBadge = '<span class="badge banned">🚫 Banned</span>';
+                } else {
+                    statusBadge = '<span class="badge active">Active</span>';
+                }
+                var isProtected = isAdmin;
+
+                html += '<tr>';
+                html += '<td><div class="user-cell"><img src="' + (user.avatar || 'assets/avatars/default-avatar.png') + '" class="user-avatar"><div class="user-info"><div class="name">' + user.fullName + '</div><div class="email">' + (user.email || '') + '</div></div></div></td>';
+                html += '<td><strong style="font-family:monospace;color:var(--accent);">' + user.rollNumber + '</strong></td>';
+                html += '<td>' + (user.email || '-') + '</td>';
+                html += '<td><span class="password-cell" onclick="copyPassword(\'' + user.password + '\')"><i class="fas fa-copy"></i> ' + user.password + '</span></td>';
+                html += '<td>' + (user.phone || '-') + '</td>';
+                html += '<td>' + statusBadge + '</td>';
+                html += '<td style="text-align:center;"><div class="table-actions">';
+                
+                // View Button
+                html += '<button class="btn-icon view" onclick="viewUser(\'' + user.id + '\')" title="View"><i class="fas fa-eye"></i></button>';
+                
+                // Edit Button
+                html += '<button class="btn-icon edit" onclick="editUser(\'' + user.id + '\')" title="Edit"><i class="fas fa-edit"></i></button>';
+                
+                // Reset Button
+                html += '<button class="btn-icon reset" onclick="resetUserProgress(\'' + user.id + '\')" title="Reset"><i class="fas fa-undo"></i></button>';
+                
+                // Ban/Unban Button
+                if (isProtected) {
+                    html += '<span class="btn-icon protected" title="Protected"><i class="fas fa-shield-alt"></i></span>';
+                } else if (user.isBanned) {
+                    html += '<button class="btn-icon unban" onclick="toggleBan(\'' + user.id + '\')" title="Unban"><i class="fas fa-user-check"></i></button>';
+                } else {
+                    html += '<button class="btn-icon ban" onclick="toggleBan(\'' + user.id + '\')" title="Ban"><i class="fas fa-ban"></i></button>';
+                }
+                
+                // Delete Button
+                if (!isProtected) {
+                    html += '<button class="btn-icon delete" onclick="deleteUser(\'' + user.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>';
+                }
+                
+                html += '</div></td>';
+                html += '</tr>';
+            }
+            
+            tbody.innerHTML = html;
+        }
+
+        function searchUsers(query) {
+            var filtered = allUsers.filter(function(user) {
+                return user.fullName.toLowerCase().includes(query.toLowerCase()) ||
+                    user.rollNumber.toLowerCase().includes(query.toLowerCase()) ||
+                    (user.email || '').toLowerCase().includes(query.toLowerCase());
+            });
+            renderUsers(filtered);
+        }
+
+        function filterUsers() {
+            var status = document.getElementById('statusFilter').value;
+            var filtered = allUsers;
+            if (status === 'active') {
+                filtered = allUsers.filter(function(u) { return !u.isBanned && u.rollNumber !== 'ADMIN001'; });
+            } else if (status === 'banned') {
+                filtered = allUsers.filter(function(u) { return u.isBanned; });
+            } else if (status === 'admin') {
+                filtered = allUsers.filter(function(u) { return u.rollNumber === 'ADMIN001' || u.isAdmin; });
+            }
+            renderUsers(filtered);
+        }
+
+        // ============================================================
+        //  USER ACTIONS
+        // ============================================================
+
+        function viewUser(userId) {
+            var user = DB.getUserById(userId);
+            if (!user) { showToast('User not found!', 'error'); return; }
+            var results = DB.getResultsByUserId(userId);
+            var totalQuizzes = results.length;
+            var totalScore = results.reduce(function(sum, r) { return sum + r.score; }, 0);
+            var avgScore = totalQuizzes > 0 ? (results.reduce(function(sum, r) { return sum + r.percentage; }, 0) / totalQuizzes) : 0;
+            showToast('👤 ' + user.fullName + ' | 📚 ' + totalQuizzes + ' quizzes | 📊 ' + totalScore + ' score | 🎯 ' + avgScore.toFixed(1) + '% avg', 'info');
+        }
+
+        function copyPassword(password) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(password).then(function() {
+                    showToast('📋 Password copied!');
+                }).catch(function() {
+                    fallbackCopy(password);
+                });
+            } else {
+                fallbackCopy(password);
+            }
+        }
+
+        function fallbackCopy(text) {
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('📋 Password copied!');
+        }
+
+        function editUser(userId) {
+            var user = DB.getUserById(userId);
+            if (!user) { showToast('User not found!', 'error'); return; }
+            var newName = prompt('Enter new full name:', user.fullName);
+            if (newName === null) return;
+            var newEmail = prompt('Enter new email:', user.email || '');
+            if (newEmail === null) return;
+            var newPhone = prompt('Enter new phone:', user.phone || '');
+            if (newPhone === null) return;
+            var newPassword = prompt('Enter new password (leave blank to keep current):', '');
+            var updates = { 
+                fullName: newName.trim() || user.fullName, 
+                email: newEmail.trim() || user.email, 
+                phone: newPhone.trim() || user.phone 
+            };
+            if (newPassword && newPassword.trim().length >= 6) { updates.password = newPassword.trim(); }
+            DB.updateUser(userId, updates);
+            showToast('✅ User updated!');
+            loadUsers();
+        }
+
+        function toggleBan(userId) {
+            var user = DB.getUserById(userId);
+            if (!user) { showToast('User not found!', 'error'); return; }
+            if (user.rollNumber === 'ADMIN001') { showToast('Cannot ban admin!', 'error'); return; }
+            var action = user.isBanned ? 'unban' : 'ban';
+            if (!confirm('Are you sure you want to ' + action + ' this user?')) return;
+            DB.updateUser(userId, { isBanned: !user.isBanned });
+            showToast('✅ User ' + action + 'ned!');
+            loadUsers();
+        }
+
+        function resetUserProgress(userId) {
+            var user = DB.getUserById(userId);
+            if (!user) { showToast('User not found!', 'error'); return; }
+            if (!confirm('⚠️ Reset all progress for "' + user.fullName + '"?')) return;
+            DB.updateUser(userId, { 
+                xp: 0, streak: 0, longestStreak: 0, totalScore: 0, quizzesTaken: [] 
+            });
+            var results = DB.getResults();
+            results = results.filter(function(r) { return r.userId !== userId; });
+            DB.saveResults(results);
+            showToast('✅ Progress reset for ' + user.fullName);
+            loadUsers();
+        }
+
+        function deleteUser(userId) {
+            var user = DB.getUserById(userId);
+            if (!user) { showToast('User not found!', 'error'); return; }
+            if (user.rollNumber === 'ADMIN001') { showToast('Cannot delete admin!', 'error'); return; }
+            if (!confirm('⚠️ Delete "' + user.fullName + '" permanently?')) return;
+            DB.deleteUser(userId);
+            var results = DB.getResults();
+            results = results.filter(function(r) { return r.userId !== userId; });
+            DB.saveResults(results);
+            showToast('🗑️ User deleted!');
+            loadUsers();
+        }
+
+        function addUser() {
+            var fullName = prompt('Enter full name:');
+            if (!fullName) return;
+            var rollNumber = prompt('Enter roll number:');
+            if (!rollNumber) return;
+            var email = prompt('Enter email:') || '';
+            var phone = prompt('Enter phone:') || '';
+            var password = prompt('Enter password (min 6 chars):');
+            if (!password || password.length < 6) { showToast('Password must be 6+ chars', 'error'); return; }
+            var users = DB.getUsers();
+            if (users.find(function(u) { return u.rollNumber === rollNumber; })) { showToast('Roll number exists!', 'error'); return; }
+            var newUser = {
+                id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                fullName: fullName.trim(),
+                rollNumber: rollNumber.trim(),
+                password: password,
+                email: email.trim(),
+                phone: phone.trim(),
+                avatar: 'assets/avatars/default-avatar.png',
+                xp: 0, streak: 0, longestStreak: 0, totalScore: 0, quizzesTaken: [], achievements: [],
+                createdAt: new Date().toISOString(), isActive: true, isBanned: false
+            };
+            users.push(newUser);
+            DB.saveUsers(users);
+            showToast('✅ User added!');
+            loadUsers();
+        }
+
+        function exportUsersJSON() {
+            var users = DB.getUsers();
+            var data = JSON.stringify(users, null, 2);
+            var blob = new Blob([data], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'users_export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📤 Users exported!');
+        }
+
+        // ============================================================
+        //  PARTICLES
+        // ============================================================
+        function initParticles() {
+            var canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            var particles = [];
+            for (var i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 230, 118, ' + p.opacity + ')';
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ============================================================
+        //  PAGE LOAD
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('quiznexus_admin_session')) { 
+                redirectTo('admin-login.html'); 
+                return; 
+            }
+            var settings = DB.getSettings();
+            if (settings.theme) applyTheme(settings.theme);
+            initParticles();
+            loadUsers();
+        });
+
+        // ============================================================
+        //  GLOBAL EXPORTS
+        // ============================================================
+        window.searchUsers = searchUsers;
+        window.filterUsers = filterUsers;
+        window.viewUser = viewUser;
+        window.editUser = editUser;
+        window.toggleBan = toggleBan;
+        window.resetUserProgress = resetUserProgress;
+        window.deleteUser = deleteUser;
+        window.addUser = addUser;
+        window.exportUsersJSON = exportUsersJSON;
+        window.copyPassword = copyPassword;
+        window.logout = logout;
+        window.toggleTheme = toggleTheme;
+    </script>
+</body>
+</html>

@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Meta Tag -->
+<meta name="theme-color" content="#0b1a0e">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard · QuizNexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 20%, #132b17, #051007);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e2f0e5;
+        }
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            padding: 16px;
+            gap: 16px;
+        }
+        .glass {
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        .glass:hover {
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+        .sidebar {
+            width: 240px;
+            padding: 24px 16px;
+            position: sticky;
+            top: 16px;
+            height: calc(100vh - 32px);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.15);
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            background: #00e676;
+            color: #0b1a0e;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .logo-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #e2f0e5;
+        }
+        .logo-name .accent { color: #00e676; }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            color: #8fb89a;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            background: rgba(0, 230, 118, 0.08);
+            color: #e2f0e5;
+        }
+        .nav-item.active {
+            background: rgba(0, 230, 118, 0.12);
+            color: #00e676;
+        }
+        .nav-item i { width: 20px; text-align: center; }
+        .main-content {
+            flex: 1;
+            padding: 0 8px 20px;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .greeting {
+            color: #8fb89a;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #e2f0e5;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: #00e676;
+        }
+        
+        /* ===== SERVER INFO CARD ===== */
+        .server-info-card {
+            padding: 16px 24px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .server-info-card i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        .server-info-card .server-name {
+            font-weight: 600;
+        }
+        .server-info-card .server-code {
+            font-family: 'Courier New', monospace;
+            color: var(--accent);
+            background: rgba(0, 230, 118, 0.08);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 230, 118, 0.1);
+        }
+
+        /* ===== AVAILABLE QUIZZES - TOP SECTION ===== */
+        .quizzes-section {
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .quizzes-section h2 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .quiz-card-item {
+            padding: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            background: var(--bg-glass);
+        }
+        .quiz-card-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-soft), var(--neon-glow);
+        }
+        .quiz-card-item .title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+        .quiz-card-item .description {
+            color: #8fb89a;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .quiz-card-item .meta {
+            display: flex;
+            gap: 14px;
+            font-size: 0.8rem;
+            color: #8fb89a;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-start {
+            background: linear-gradient(145deg, #00c853, #00e676);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            color: #0b1a0e;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 230, 118, 0.4);
+        }
+        .empty-quizzes {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 40px;
+            color: #8fb89a;
+        }
+        .empty-quizzes i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(0, 230, 118, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #00e676;
+            flex-shrink: 0;
+        }
+        .stat-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .stat-info p {
+            color: #8fb89a;
+            font-size: 0.8rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .chart-card { padding: 24px; }
+        .chart-card h3 { margin-bottom: 16px; }
+        .progress-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .circular-progress {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+        .circular-progress svg { transform: rotate(-90deg); }
+        .circular-progress circle { transition: stroke-dashoffset 0.8s ease; }
+        .progress-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-text span { font-size: 1.6rem; font-weight: 700; }
+        .progress-text small { color: #8fb89a; font-size: 0.7rem; }
+
+        .quote-card {
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .quote-card i {
+            font-size: 1.6rem;
+            color: #00e676;
+            opacity: 0.5;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #00e676;
+            color: #00e676;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline:hover {
+            background: #00e676;
+            color: #0b1a0e;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #00c853, #00e676);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0b1a0e;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 24px rgba(0, 230, 118, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 36px rgba(0, 230, 118, 0.5);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        .toast {
+            background: rgba(20, 40, 25, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 4px solid #00e676;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #e2f0e5;
+            margin-top: 10px;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .app-layout { flex-direction: column; padding: 10px; }
+            .sidebar { width: 100%; height: auto; position: relative; top: 0; padding: 16px; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .nav-item { padding: 6px 12px; font-size: 0.85rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .server-info-card { flex-direction: column; text-align: center; }
+            .quiz-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .stat-card { padding: 14px; }
+            .stat-info h3 { font-size: 1.2rem; }
+            .dashboard-header h1 { font-size: 1.4rem; }
+            .quiz-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-brand">
+                <span class="logo-icon">QN</span>
+                <span class="logo-name">Quiz<span class="accent">Nexus</span></span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="quiz.html" class="nav-item"><i class="fas fa-play-circle"></i> Available Quiz</a>
+                <a href="result.html" class="nav-item"><i class="fas fa-chart-bar"></i> My Results</a>
+                <a href="leaderboard.html" class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Dashboard</h1>
+                <div class="header-actions">
+                    <span class="greeting">Welcome back, <strong id="userNameDisplay">User</strong>!</span>
+                    <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                </div>
+            </header>
+
+            <!-- ===== SERVER INFO ===== -->
+            <div class="glass server-info-card">
+                <i class="fas fa-server"></i>
+                <span>Your Server: <strong class="server-name" id="userServerName">Loading...</strong></span>
+                <span class="server-code" id="userServerCode">---</span>
+            </div>
+
+            <!-- ===== AVAILABLE QUIZZES - TOP PAR ===== -->
+            <div class="glass quizzes-section">
+                <h2><i class="fas fa-play-circle" style="color:#00e676;"></i> Available Quizzes</h2>
+                <div class="quiz-grid" id="availableQuizzes">
+                    <!-- Rendered by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-info">
+                        <h3 id="totalScore">0</h3>
+                        <p>Total Score</p>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-percent"></i></div>
+                    <div class="stat-info">
+                        <h3 id="avgPercentage">0%</h3>
+                        <p>Average Score</p>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-info">
+                        <h3 id="highestScore">0</h3>
+                        <p>Highest Score</p>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                    <div class="stat-info">
+                        <h3 id="currentStreak">0</h3>
+                        <p>Current Streak</p>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="stat-info">
+                        <h3 id="xpDisplay">0</h3>
+                        <p>XP Points</p>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon"><i class="fas fa-medal"></i></div>
+                    <div class="stat-info">
+                        <h3 id="rankDisplay">-</h3>
+                        <p>Rank</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & Progress -->
+            <div class="dashboard-grid">
+                <div class="glass chart-card">
+                    <h3>📈 Performance Trend</h3>
+                    <canvas id="performanceChart" height="200"></canvas>
+                </div>
+                <div class="glass progress-card">
+                    <h3>🎯 Daily Goal</h3>
+                    <div class="circular-progress">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="#2d4a34" stroke-width="8"/>
+                            <circle cx="60" cy="60" r="50" fill="none" stroke="#00e676" stroke-width="8" 
+                                    stroke-dasharray="314" stroke-dashoffset="314" id="progressCircle"/>
+                        </svg>
+                        <div class="progress-text">
+                            <span id="progressPercent">0%</span>
+                            <small>Daily Goal</small>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;font-size:0.85rem;color:#8fb89a;">
+                        <span id="todayQuizzes">0</span> / 3 quizzes today
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivational Quote -->
+            <div class="glass quote-card">
+                <i class="fas fa-quote-left"></i>
+                <div>
+                    <div class="quote-text" id="motivationalQuote">"The expert in anything was once a beginner."</div>
+                    <div style="font-size:0.8rem;color:#5a7a6a;margin-top:4px;">— Unknown</div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // ============================================================
+        //  DATABASE
+        // ============================================================
+        const DB = {
+            USERS: 'quiznexus_users',
+            QUIZZES: 'quiznexus_quizzes',
+            RESULTS: 'quiznexus_results',
+            SETTINGS: 'quiznexus_settings',
+            CURRENT_USER: 'quiznexus_current_user',
+            SERVERS: 'quiznexus_servers',
+            getUsers() {
+                try { return JSON.parse(localStorage.getItem(this.USERS)) || []; } 
+                catch { return []; }
+            },
+            getQuizzes() {
+                try { return JSON.parse(localStorage.getItem(this.QUIZZES)) || []; } 
+                catch { return []; }
+            },
+            getServerById(id) {
+                try {
+                    const servers = JSON.parse(localStorage.getItem(this.SERVERS) || '[]');
+                    return servers.find(s => s.id === id) || null;
+                } catch { return null; }
+            },
+            getCurrentUser() {
+                try {
+                    const data = localStorage.getItem(this.CURRENT_USER);
+                    return data ? JSON.parse(data) : null;
+                } catch { return null; }
+            },
+            setCurrentUser(user) {
+                localStorage.setItem(this.CURRENT_USER, JSON.stringify(user));
+            },
+            clearCurrentUser() {
+                localStorage.removeItem(this.CURRENT_USER);
+            },
+            getSettings() {
+                try {
+                    return JSON.parse(localStorage.getItem(this.SETTINGS)) || {
+                        theme: 'dark',
+                        accentColor: '#00e676',
+                        animations: true,
+                        notifications: true,
+                        sound: true,
+                        fontSize: 'medium',
+                        language: 'en'
+                    };
+                } catch { return { theme: 'dark', accentColor: '#00e676', animations: true, notifications: true, sound: true, fontSize: 'medium', language: 'en' }; }
+            },
+            saveSettings(settings) {
+                localStorage.setItem(this.SETTINGS, JSON.stringify(settings));
+            }
+        };
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function redirectTo(page) {
+            window.location.href = page;
+        }
+
+        function logout() {
+            DB.clearCurrentUser();
+            showToast('Logged out successfully');
+            setTimeout(() => redirectTo('login.html'), 400);
+        }
+
+        function toggleTheme() {
+            const settings = DB.getSettings();
+            const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
+            settings.theme = newTheme;
+            DB.saveSettings(settings);
+            applyTheme(newTheme);
+            showToast(`Switched to ${newTheme} mode`);
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-toggle i').forEach(icon => {
+                icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            });
+            document.body.style.background = theme === 'light' 
+                ? 'radial-gradient(ellipse at 20% 20%, #e8f5e9, #c8e6c9)' 
+                : 'radial-gradient(circle at 20% 20%, #132b17, #051007)';
+        }
+
+        // ============================================================
+        //  LOAD USER SERVER INFO
+        // ============================================================
+        function loadUserServerInfo() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                document.getElementById('userServerName').textContent = 'Not Logged In';
+                document.getElementById('userServerCode').textContent = '---';
+                return;
+            }
+            
+            if (!currentUser.serverId) {
+                document.getElementById('userServerName').textContent = 'No Server Assigned';
+                document.getElementById('userServerCode').textContent = '---';
+                return;
+            }
+            
+            const server = DB.getServerById(currentUser.serverId);
+            if (server) {
+                document.getElementById('userServerName').textContent = server.name;
+                document.getElementById('userServerCode').textContent = server.code || '---';
+                console.log('✅ Server loaded:', server.name, server.code);
+            } else {
+                document.getElementById('userServerName').textContent = 'Server Not Found';
+                document.getElementById('userServerCode').textContent = '---';
+            }
+        }
+
+        // ============================================================
+        //  LOAD AVAILABLE QUIZZES - FIXED
+        // ============================================================
+        function loadAvailableQuizzes() {
+            const container = document.getElementById('availableQuizzes');
+            if (!container) {
+                console.error('❌ Container not found!');
+                return;
+            }
+
+            const currentUser = DB.getCurrentUser();
+            console.log('👤 Current User:', currentUser);
+
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="empty-quizzes">
+                        <i class="fas fa-lock"></i>
+                        <p>Please login to see available quizzes</p>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log('🆔 User Server ID:', currentUser.serverId);
+
+            // Get all quizzes
+            const allQuizzes = DB.getQuizzes();
+            console.log('📚 Total Quizzes:', allQuizzes.length);
+
+            // Filter: published quizzes for user's server
+            let quizzes = allQuizzes.filter(q => {
+                const isPublished = q.published === true;
+                const isServerMatch = q.serverId === currentUser.serverId;
+                console.log(`📝 "${q.title}" → Published: ${isPublished}, Server Match: ${isServerMatch}, ServerId: ${q.serverId}`);
+                return isPublished && isServerMatch;
+            });
+
+            console.log('📚 Filtered Quizzes:', quizzes.length);
+
+            if (quizzes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-quizzes">
+                        <i class="fas fa-inbox"></i>
+                        <p>No quizzes available for your server.</p>
+                        <p style="font-size:0.85rem;margin-top:8px;color:var(--text-muted);">
+                            Server: ${document.getElementById('userServerName').textContent || 'Unknown'}
+                        </p>
+                        <p style="font-size:0.85rem;margin-top:4px;color:var(--text-muted);">
+                            Total quizzes in system: ${allQuizzes.length}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = quizzes.map(q => {
+                const server = DB.getServerById(q.serverId);
+                return `
+                    <div class="quiz-card-item" onclick="window.location.href='quiz.html?id=${q.id}'">
+                        <div class="title">${q.title}</div>
+                        <div class="description">${q.description || 'No description'}</div>
+                        <div class="meta">
+                            <span><i class="fas fa-question-circle"></i> ${q.questions?.length || 0} questions</span>
+                            <span><i class="fas fa-clock"></i> ${q.duration} min</span>
+                            <span><i class="fas fa-signal"></i> ${q.difficulty || 'Medium'}</span>
+                            <span><i class="fas fa-tag"></i> ${q.category || 'General'}</span>
+                            ${server ? `<span><i class="fas fa-server" style="color:var(--accent);"></i> ${server.name}</span>` : ''}
+                        </div>
+                        <button class="btn-start">
+                            <i class="fas fa-play"></i> Start Quiz
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================================
+        //  DASHBOARD STATS
+        // ============================================================
+        function loadDashboardStats() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) return;
+
+            document.getElementById('userNameDisplay').textContent = currentUser.fullName || 'User';
+            document.getElementById('totalScore').textContent = currentUser.totalScore || 0;
+            document.getElementById('xpDisplay').textContent = currentUser.xp || 0;
+            document.getElementById('currentStreak').textContent = currentUser.streak || 0;
+        }
+
+        // ============================================================
+        //  PARTICLES
+        // ============================================================
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 230, 118, ${p.opacity})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ============================================================
+        //  PAGE LOAD
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔵 Dashboard page loaded');
+            
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) {
+                redirectTo('login.html');
+                return;
+            }
+
+            // Apply theme
+            const settings = DB.getSettings();
+            if (settings.theme) applyTheme(settings.theme);
+
+            // Load all data
+            loadUserServerInfo();
+            loadDashboardStats();
+            loadAvailableQuizzes();
+
+            // Init particles
+            initParticles();
+
+            console.log('✅ Dashboard loaded successfully');
+            console.log('👤 User:', currentUser.fullName);
+            console.log('🖥️ Server ID:', currentUser.serverId);
+        });
+
+        // ============================================================
+        //  GLOBAL EXPORTS
+        // ============================================================
+        window.logout = logout;
+        window.toggleTheme = toggleTheme;
+        window.loadAvailableQuizzes = loadAvailableQuizzes;
+    </script>
+</body>
+</html>

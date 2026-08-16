@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile · QuizNexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b1a0e;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e2f0e5;
+            display: flex;
+            flex-direction: column;
+        }
+        [data-theme="light"] body {
+            background: #f0f4f1;
+            color: #0a1a0e;
+        }
+        .glass {
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 28px;
+            transition: 0.3s;
+            padding: 24px;
+        }
+        [data-theme="light"] .glass {
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(0, 180, 80, 0.15);
+        }
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            padding: 16px;
+            gap: 16px;
+        }
+        .sidebar {
+            width: 240px;
+            padding: 24px 16px;
+            position: sticky;
+            top: 16px;
+            height: calc(100vh - 32px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 28px;
+        }
+        [data-theme="light"] .sidebar {
+            background: rgba(255, 255, 255, 0.78);
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.15);
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            background: #00e676;
+            color: #0b1a0e;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .logo-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #e2f0e5;
+        }
+        .logo-name .accent { color: #00e676; }
+        [data-theme="light"] .logo-name { color: #0a1a0e; }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            color: #8fb89a;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            background: rgba(0, 230, 118, 0.08);
+            color: #e2f0e5;
+        }
+        .nav-item.active {
+            background: rgba(0, 230, 118, 0.12);
+            color: #00e676;
+        }
+        .nav-item i { width: 20px; text-align: center; }
+        .main-content {
+            flex: 1;
+            padding: 0 8px 20px;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #e2f0e5;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        [data-theme="light"] .theme-toggle {
+            border-color: rgba(0, 180, 80, 0.15);
+            color: #0a1a0e;
+        }
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .profile-avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .profile-avatar {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #00e676;
+            box-shadow: 0 0 40px rgba(0, 230, 118, 0.15);
+        }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: #00e676;
+            color: #0b1a0e;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+        }
+        .stat-item .stat-value { display: block; font-size: 1.4rem; font-weight: 700; color: #00e676; }
+        .stat-item .stat-label { font-size: 0.8rem; color: #8fb89a; }
+        .input-group {
+            position: relative;
+            margin: 12px 0;
+        }
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8fb89a;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1.5px solid rgba(45, 74, 52, 0.5);
+            border-radius: 16px;
+            color: #e2f0e5;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        [data-theme="light"] .input-group input {
+            background: rgba(0, 0, 0, 0.04);
+            color: #0a1a0e;
+        }
+        .input-group input:focus {
+            border-color: #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+        }
+        .input-group input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary {
+            background: linear-gradient(145deg, #00c853, #00e676);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0b1a0e;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 24px rgba(0, 230, 118, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 8px 36px rgba(0, 230, 118, 0.5); }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #00e676;
+            color: #00e676;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline:hover { background: #00e676; color: #0b1a0e; }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+        .btn-danger { border-color: #ff4444; color: #ff4444; }
+        .btn-danger:hover { background: #ff4444; color: white; }
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        .toast {
+            background: rgba(20, 40, 25, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 4px solid #00e676;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #e2f0e5;
+            margin-top: 10px;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .profile-history { padding: 24px; }
+        @media (max-width: 768px) {
+            .app-layout { flex-direction: column; padding: 10px; }
+            .sidebar { width: 100%; height: auto; position: relative; top: 0; padding: 16px; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .nav-item { padding: 6px 12px; font-size: 0.85rem; }
+            .profile-container { grid-template-columns: 1fr; }
+            .profile-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .profile-stats { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="app-layout">
+        <aside class="sidebar glass">
+            <div class="sidebar-brand">
+                <span class="logo-icon">QN</span>
+                <span class="logo-name">Quiz<span class="accent">Nexus</span></span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="quiz.html" class="nav-item"><i class="fas fa-play-circle"></i> Available Quiz</a>
+                <a href="result.html" class="nav-item"><i class="fas fa-chart-bar"></i> My Results</a>
+                <a href="leaderboard.html" class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="profile.html" class="nav-item active"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>👤 Profile</h1>
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            </header>
+
+            <div class="profile-container">
+                <div class="glass profile-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar">
+                            <img src="assets/avatars/default-avatar.png" alt="Avatar" id="profileAvatar">
+                            <div class="avatar-edit-btn" onclick="document.getElementById('profileAvatarInput').click()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <input type="file" id="profileAvatarInput" accept="image/*" style="display:none">
+                        </div>
+                        <button class="btn-outline btn-sm btn-danger" onclick="deleteAvatar()"><i class="fas fa-trash"></i> Delete Avatar</button>
+                    </div>
+
+                    <form id="profileForm" onsubmit="event.preventDefault(); updateProfile();">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="profileName" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="profileEmail" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="profilePhone" placeholder="Phone">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="profileRollNumber" placeholder="Roll Number" disabled>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width:100%;"><i class="fas fa-save"></i> Update Profile</button>
+                    </form>
+
+                    <div class="profile-stats">
+                        <div class="stat-item"><span class="stat-value" id="profileXP">0</span><span class="stat-label">XP</span></div>
+                        <div class="stat-item"><span class="stat-value" id="profileQuizzes">0</span><span class="stat-label">Quizzes</span></div>
+                        <div class="stat-item"><span class="stat-value" id="profileAvgScore">0%</span><span class="stat-label">Avg Score</span></div>
+                        <div class="stat-item"><span class="stat-value" id="profileFollowers">0</span><span class="stat-label">Followers</span></div>
+                    </div>
+                </div>
+
+                <div class="glass profile-history">
+                    <h3>📋 Quiz History</h3>
+                    <div id="quizHistory"><p style="color:#8fb89a;text-align:center;padding:20px;">No quizzes taken yet</p></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================================
+        //  DIRECT LOCALSTORAGE - NO EXTERNAL DEPENDENCIES
+        // ============================================================
+        
+        function getCurrentUser() {
+            try {
+                var data = localStorage.getItem('quiznexus_current_user');
+                return data ? JSON.parse(data) : null;
+            } catch(e) { return null; }
+        }
+
+        function getUsers() {
+            try { return JSON.parse(localStorage.getItem('quiznexus_users')) || []; } 
+            catch(e) { return []; }
+        }
+
+        function getResults() {
+            try { return JSON.parse(localStorage.getItem('quiznexus_results')) || []; } 
+            catch(e) { return []; }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('quiznexus_users', JSON.stringify(users));
+        }
+
+        function showToast(message, type) {
+            type = type || 'success';
+            var container = document.getElementById('toastContainer');
+            if (!container) return;
+            var toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.borderLeftColor = type === 'error' ? '#ff4444' : '#00e676';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 3500);
+        }
+
+        function redirectTo(page) {
+            window.location.href = page;
+        }
+
+        function logout() {
+            localStorage.removeItem('quiznexus_current_user');
+            showToast('Logged out successfully');
+            setTimeout(function() { redirectTo('login.html'); }, 400);
+        }
+
+        function toggleTheme() {
+            var current = document.documentElement.getAttribute('data-theme') || 'dark';
+            var newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.querySelectorAll('.theme-toggle i').forEach(function(icon) {
+                icon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            });
+            document.body.style.background = newTheme === 'light' 
+                ? 'radial-gradient(ellipse at 20% 20%, #e8f5e9, #c8e6c9)' 
+                : 'radial-gradient(circle at 20% 20%, #132b17, #051007)';
+            
+            var settings = JSON.parse(localStorage.getItem('quiznexus_settings') || '{}');
+            settings.theme = newTheme;
+            localStorage.setItem('quiznexus_settings', JSON.stringify(settings));
+        }
+
+        function initParticles() {
+            var canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            var particles = [];
+            for (var i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(function(p) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 230, 118, ' + p.opacity + ')';
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ============================================================
+        //  LOAD PROFILE
+        // ============================================================
+        function loadProfile() {
+            var user = getCurrentUser();
+            console.log('🔍 Current User:', user);
+
+            if (!user) {
+                document.getElementById('profileCard').innerHTML = '<p style="text-align:center;padding:40px;color:#8fb89a;">Please login to view profile</p>';
+                return;
+            }
+
+            document.getElementById('profileAvatar').src = user.avatar || 'assets/avatars/default-avatar.png';
+            document.getElementById('profileName').value = user.fullName || '';
+            document.getElementById('profileEmail').value = user.email || '';
+            document.getElementById('profilePhone').value = user.phone || '';
+            document.getElementById('profileRollNumber').value = user.rollNumber || '';
+
+            var results = getResults().filter(function(r) { return r.userId === user.id; });
+            var totalQuizzes = results.length;
+            var avgScore = totalQuizzes > 0 ? 
+                results.reduce(function(sum, r) { return sum + r.percentage; }, 0) / totalQuizzes : 0;
+            
+            document.getElementById('profileXP').textContent = user.xp || 0;
+            document.getElementById('profileQuizzes').textContent = totalQuizzes;
+            document.getElementById('profileAvgScore').textContent = avgScore.toFixed(1) + '%';
+            document.getElementById('profileFollowers').textContent = 0;
+
+            // Quiz History
+            var container = document.getElementById('quizHistory');
+            if (results.length === 0) {
+                container.innerHTML = '<p style="color:#8fb89a;text-align:center;padding:20px;">No quizzes taken yet</p>';
+            } else {
+                var html = '';
+                results.sort(function(a, b) { return new Date(b.completedAt) - new Date(a.completedAt); });
+                for (var i = 0; i < Math.min(results.length, 10); i++) {
+                    var r = results[i];
+                    var date = new Date(r.completedAt);
+                    html += `
+                        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(0,255,100,0.08);">
+                            <div><strong>${r.quizTitle || 'Quiz'}</strong><div style="font-size:0.8rem;color:#8fb89a;">${date.toLocaleDateString()}</div></div>
+                            <div style="text-align:right;"><span style="color:#00e676;font-weight:600;">${r.percentage.toFixed(1)}%</span><div style="font-size:0.8rem;color:#8fb89a;">${r.score}/${r.total}</div></div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        }
+
+        function updateProfile() {
+            var currentUser = getCurrentUser();
+            if (!currentUser) { showToast('Please login first', 'error'); return; }
+
+            var name = document.getElementById('profileName').value.trim();
+            var email = document.getElementById('profileEmail').value.trim();
+            var phone = document.getElementById('profilePhone').value.trim();
+            var avatar = document.getElementById('profileAvatar').src;
+
+            if (!name || name.length < 2) { showToast('Please enter a valid name', 'error'); return; }
+            if (!email || !email.includes('@')) { showToast('Please enter a valid email', 'error'); return; }
+
+            var users = getUsers();
+            var index = users.findIndex(function(u) { return u.id === currentUser.id; });
+            if (index === -1) { showToast('User not found!', 'error'); return; }
+
+            users[index].fullName = name;
+            users[index].email = email;
+            users[index].phone = phone;
+            users[index].avatar = avatar;
+            saveUsers(users);
+
+            localStorage.setItem('quiznexus_current_user', JSON.stringify(users[index]));
+            showToast('✅ Profile updated successfully!');
+        }
+
+        function deleteAvatar() {
+            if (confirm('Delete your avatar?')) {
+                document.getElementById('profileAvatar').src = 'assets/avatars/default-avatar.png';
+                showToast('Avatar deleted');
+            }
+        }
+
+        // ============================================================
+        //  PAGE LOAD
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔵 Profile page loaded');
+            
+            // Theme
+            var settings = JSON.parse(localStorage.getItem('quiznexus_settings') || '{}');
+            var theme = settings.theme || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.style.background = theme === 'light' 
+                ? 'radial-gradient(ellipse at 20% 20%, #e8f5e9, #c8e6c9)' 
+                : 'radial-gradient(circle at 20% 20%, #132b17, #051007)';
+
+            initParticles();
+            loadProfile();
+
+            // Avatar upload
+            document.getElementById('profileAvatarInput').addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { showToast('Please upload an image', 'error'); return; }
+                if (file.size > 2 * 1024 * 1024) { showToast('Image must be < 2MB', 'error'); return; }
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('profileAvatar').src = ev.target.result;
+                    showToast('Avatar updated!');
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        window.logout = logout;
+        window.toggleTheme = toggleTheme;
+        window.updateProfile = updateProfile;
+        window.deleteAvatar = deleteAvatar;
+    </script>
+</body>
+</html>

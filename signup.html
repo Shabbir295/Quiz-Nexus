@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Meta Tag -->
+<meta name="theme-color" content="#0b1a0e">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up · QuizNexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 20%, #132b17, #051007);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e2f0e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            width: 100%;
+        }
+        .glass {
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        .glass:hover {
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+        .auth-card {
+            max-width: 480px;
+            width: 100%;
+            padding: 40px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .mini-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .logo-icon {
+            background: #00e676;
+            color: #0b1a0e;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .logo-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #e2f0e5;
+        }
+        .logo-name .accent { color: #00e676; }
+        .auth-header h2 { font-size: 1.8rem; font-weight: 700; }
+        .auth-subtitle { color: #8fb89a; margin-top: 4px; }
+        .input-group {
+            position: relative;
+            margin: 14px 0;
+        }
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8fb89a;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1.5px solid rgba(45, 74, 52, 0.5);
+            border-radius: 16px;
+            color: #e2f0e5;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+        }
+        .input-group .toggle-pw {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #8fb89a;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+        }
+        .input-group .auto-roll-badge {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 230, 118, 0.1);
+            color: #00e676;
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            pointer-events: none;
+        }
+        .input-group .server-code-display {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4fc3f7;
+            font-family: 'Courier New', monospace;
+            pointer-events: none;
+            background: rgba(79, 195, 247, 0.1);
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(79, 195, 247, 0.15);
+        }
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            padding-left: 16px;
+            min-height: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #00c853, #00e676);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0b1a0e;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 24px rgba(0, 230, 118, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 36px rgba(0, 230, 118, 0.5);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #00e676;
+            color: #00e676;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-outline:hover {
+            background: #00e676;
+            color: #0b1a0e;
+        }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #8fb89a;
+            font-size: 0.95rem;
+        }
+        .link-accent {
+            color: #00e676;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .link-accent:hover { text-shadow: 0 0 20px #00e676; }
+        .avatar-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .avatar-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #00e676;
+            cursor: pointer;
+        }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .avatar-preview:hover .avatar-overlay { opacity: 1; }
+        .avatar-overlay i { color: white; font-size: 1.5rem; }
+        .password-strength { margin: 8px 0 16px; }
+        .strength-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            border-radius: 12px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+        .strength-text { font-size: 0.8rem; color: #8fb89a; }
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        .toast {
+            background: rgba(20, 40, 25, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 4px solid #00e676;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #e2f0e5;
+            margin-top: 10px;
+            animation: slideUp 0.4s ease;
+        }
+        .toast.error { border-left-color: #ff4444; }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .page-enter { animation: fadeScale 0.6s ease; }
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.92); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @media (max-width: 768px) {
+            .auth-card { padding: 30px 24px; }
+            .auth-header h2 { font-size: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .auth-card { padding: 20px 16px; }
+            .auth-header h2 { font-size: 1.2rem; }
+            .auth-header img { width: 100px !important; height: 100px !important; }
+            .avatar-preview { width: 80px; height: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <canvas id="particles-canvas"></canvas>
+    
+    <div class="auth-container page-enter">
+        <div class="glass auth-card signup-card">
+            <div class="auth-header">
+                <img src="assets/images/logo.png" alt="QuizNexus" style="width:140px;height:140px;object-fit:contain;display:block;margin:0 auto 16px;">
+                <div class="mini-logo">
+                    <span class="logo-icon">QN</span>
+                    <span class="logo-name">Quiz<span class="accent">Nexus</span></span>
+                </div>
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Start your quiz journey today</p>
+            </div>
+
+            <form id="signupForm" onsubmit="event.preventDefault(); handleSignup();">
+                <!-- Avatar -->
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="avatarPreview" onclick="document.getElementById('avatarInput').click()">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='100' fill='%2300e676'/%3E%3Ccircle cx='100' cy='70' r='35' fill='white' opacity='0.6'/%3E%3Ccircle cx='100' cy='160' r='45' fill='white' opacity='0.6'/%3E%3C/svg%3E" alt="Avatar" id="avatarImage">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                    <button type="button" class="btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">
+                        <i class="fas fa-upload"></i> Upload Avatar
+                    </button>
+                </div>
+
+                <!-- Full Name -->
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="signupFullName" placeholder="Full Name" required>
+                    <div class="error-msg" id="signupNameError"></div>
+                </div>
+
+                <!-- Roll Number - Auto Generated -->
+                <div class="input-group">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" id="signupRollNumber" placeholder="Roll Number" required readonly>
+                    <span class="auto-roll-badge">🔑 Auto</span>
+                    <div class="error-msg" id="signupRollError"></div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signupEmail" placeholder="Email Address" required>
+                    <div class="error-msg" id="signupEmailError"></div>
+                </div>
+
+                <!-- Phone -->
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="signupPhone" placeholder="Phone Number">
+                    <div class="error-msg" id="signupPhoneError"></div>
+                </div>
+
+                <!-- ===== SERVER SELECTION (Dropdown + Auto Code) ===== -->
+                <div class="input-group">
+                    <i class="fas fa-server"></i>
+                    <select id="signupServer" onchange="updateServerCodeDisplay()">
+                        <option value="">-- Select Server --</option>
+                        <!-- Rendered by JavaScript -->
+                    </select>
+                    <span class="server-code-display" id="serverCodeDisplay">No Code</span>
+                    <div class="error-msg" id="signupServerError"></div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required>
+                    <button type="button" class="toggle-pw" onclick="togglePassword('signupPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-meter" id="strengthMeter"></div>
+                    </div>
+                    <span class="strength-text" id="strengthText">Weak</span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="input-group">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+                    <div class="error-msg" id="confirmError"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html" class="link-accent">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================================
+        //  AUTO ROLL NUMBER GENERATOR
+        // ============================================================
+        function generateRollNumber() {
+            const users = DB.getUsers();
+            const year = new Date().getFullYear();
+            let maxNum = 0;
+            users.forEach(user => {
+                if (user.rollNumber) {
+                    const match = user.rollNumber.match(/QN-(\d{4})-(\d{4})/);
+                    if (match && match[1] === String(year)) {
+                        const num = parseInt(match[2]);
+                        if (num > maxNum) maxNum = num;
+                    }
+                }
+            });
+            const nextNum = maxNum + 1;
+            return `QN-${year}-${String(nextNum).padStart(4, '0')}`;
+        }
+
+        // ============================================================
+        //  UPDATE SERVER CODE DISPLAY
+        // ============================================================
+        function updateServerCodeDisplay() {
+            const select = document.getElementById('signupServer');
+            const display = document.getElementById('serverCodeDisplay');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption && selectedOption.value) {
+                // Extract code from option text (e.g., "Cloud Data Engineering (CDE-101)")
+                const text = selectedOption.text;
+                const match = text.match(/\(([^)]+)\)/);
+                if (match) {
+                    display.textContent = match[1];
+                    display.style.color = '#00e676';
+                } else {
+                    display.textContent = 'No Code';
+                    display.style.color = '#8fb89a';
+                }
+            } else {
+                display.textContent = 'No Code';
+                display.style.color = '#8fb89a';
+            }
+        }
+
+        // ============================================================
+        //  LOAD SERVERS IN DROPDOWN
+        // ============================================================
+        function loadServersDropdown() {
+            const servers = DB.getActiveServers();
+            const select = document.getElementById('signupServer');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">-- Select Server --</option>';
+            servers.forEach(server => {
+                const option = document.createElement('option');
+                option.value = server.id;
+                option.textContent = server.name + ' (' + (server.code || 'N/A') + ')';
+                select.appendChild(option);
+            });
+            
+            // Update code display
+            updateServerCodeDisplay();
+        }
+
+        // ============================================================
+        //  DATABASE
+        // ============================================================
+        const DB = {
+            USERS: 'quiznexus_users',
+            SERVERS: 'quiznexus_servers',
+            CURRENT_USER: 'quiznexus_current_user',
+            getUsers() {
+                return JSON.parse(localStorage.getItem(this.USERS)) || [];
+            },
+            saveUsers(users) {
+                localStorage.setItem(this.USERS, JSON.stringify(users));
+            },
+            getServers() {
+                return JSON.parse(localStorage.getItem(this.SERVERS)) || [];
+            },
+            getActiveServers() {
+                return this.getServers().filter(s => s.isActive !== false);
+            },
+            getServerById(id) {
+                return this.getServers().find(s => s.id === id) || null;
+            },
+            getUserByRollNumber(rollNumber) {
+                return this.getUsers().find(u => u.rollNumber === rollNumber) || null;
+            },
+            getUserByEmail(email) {
+                return this.getUsers().find(u => u.email === email) || null;
+            },
+            createUser(userData) {
+                const users = this.getUsers();
+                const newUser = {
+                    id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    fullName: userData.fullName,
+                    rollNumber: userData.rollNumber,
+                    password: userData.password,
+                    email: userData.email || '',
+                    phone: userData.phone || '',
+                    avatar: userData.avatar || '',
+                    serverId: userData.serverId || null,
+                    xp: 0,
+                    streak: 0,
+                    longestStreak: 0,
+                    totalScore: 0,
+                    quizzesTaken: [],
+                    achievements: [],
+                    createdAt: new Date().toISOString(),
+                    isActive: true,
+                    isBanned: false
+                };
+                users.push(newUser);
+                this.saveUsers(users);
+                return newUser;
+            },
+            getCurrentUser() {
+                const data = localStorage.getItem(this.CURRENT_USER);
+                return data ? JSON.parse(data) : null;
+            },
+            setCurrentUser(user) {
+                localStorage.setItem(this.CURRENT_USER, JSON.stringify(user));
+            }
+        };
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) {
+                const newContainer = document.createElement('div');
+                newContainer.id = 'toastContainer';
+                newContainer.className = 'toast-container';
+                document.body.appendChild(newContainer);
+                return showToast(message, type);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function redirectTo(page) {
+            window.location.href = page;
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+            const icon = input.parentElement?.querySelector('.toggle-pw i');
+            if (icon) {
+                icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            }
+        }
+
+        // ============================================================
+        //  PASSWORD STRENGTH
+        // ============================================================
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+            const colors = ['#ff4444', '#ff6b6b', '#ffc107', '#4fc3f7', '#00e676'];
+            const width = (strength / 5) * 100;
+            
+            return {
+                score: strength,
+                label: labels[strength] || 'Very Weak',
+                color: colors[strength] || '#ff4444',
+                width: width
+            };
+        }
+
+        // ============================================================
+        //  HANDLE SIGNUP
+        // ============================================================
+        function handleSignup() {
+            const fullName = document.getElementById('signupFullName').value.trim();
+            const rollNumber = document.getElementById('signupRollNumber').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const avatar = document.getElementById('avatarImage').src;
+            const serverId = document.getElementById('signupServer').value;
+
+            // Clear errors
+            document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+            document.querySelectorAll('.input-group input, .input-group select').forEach(el => el.style.borderColor = '');
+
+            let isValid = true;
+
+            if (!fullName || fullName.length < 2) {
+                document.getElementById('signupNameError').textContent = '✗ Please enter a valid full name (min 2 chars)';
+                document.getElementById('signupFullName').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            if (!rollNumber) {
+                document.getElementById('signupRollError').textContent = '✗ Roll number not generated!';
+                document.getElementById('signupRollNumber').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            const existingUser = DB.getUserByRollNumber(rollNumber);
+            if (existingUser) {
+                document.getElementById('signupRollError').textContent = '✗ This roll number is already registered';
+                document.getElementById('signupRollNumber').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            if (!email || !email.includes('@')) {
+                document.getElementById('signupEmailError').textContent = '✗ Please enter a valid email address';
+                document.getElementById('signupEmail').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            const existingEmail = DB.getUserByEmail(email);
+            if (existingEmail) {
+                document.getElementById('signupEmailError').textContent = '✗ This email is already registered';
+                document.getElementById('signupEmail').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            // Check server selection
+            if (!serverId) {
+                document.getElementById('signupServerError').textContent = '✗ Please select a server';
+                document.getElementById('signupServer').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            if (!password || password.length < 6) {
+                document.getElementById('signupPassword').style.borderColor = '#ff4444';
+                showToast('Password must be at least 6 characters', 'error');
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('confirmError').textContent = '✗ Passwords do not match';
+                document.getElementById('signupConfirmPassword').style.borderColor = '#ff4444';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Create user
+            const newUser = DB.createUser({
+                fullName,
+                rollNumber,
+                password,
+                email,
+                phone,
+                avatar,
+                serverId
+            });
+
+            // Auto login
+            DB.setCurrentUser(newUser);
+            
+            const server = DB.getServerById(serverId);
+            showToast('Account created successfully! 🎉 Welcome to QuizNexus!');
+            showToast(`🔑 Your Roll Number: ${rollNumber}`, 'info');
+            if (server) {
+                showToast(`🏫 Server: ${server.name} (${server.code})`, 'info');
+            }
+            
+            setTimeout(() => {
+                redirectTo('dashboard.html');
+            }, 800);
+        }
+
+        // ============================================================
+        //  PARTICLES
+        // ============================================================
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 230, 118, ${p.opacity})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ============================================================
+        //  PAGE LOAD
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticles();
+            
+            // Load servers dropdown
+            loadServersDropdown();
+            
+            // Check if already logged in
+            const currentUser = DB.getCurrentUser();
+            if (currentUser) {
+                redirectTo('dashboard.html');
+                return;
+            }
+            
+            // Generate Auto Roll Number
+            const rollNumber = generateRollNumber();
+            document.getElementById('signupRollNumber').value = rollNumber;
+            console.log('🔑 Auto-generated Roll Number:', rollNumber);
+
+            // Password strength checker
+            document.getElementById('signupPassword').addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                const meter = document.getElementById('strengthMeter');
+                const text = document.getElementById('strengthText');
+                if (meter) {
+                    meter.style.width = strength.width + '%';
+                    meter.style.background = strength.color;
+                }
+                if (text) {
+                    text.textContent = strength.label;
+                    text.style.color = strength.color;
+                }
+            });
+
+            // Confirm password check
+            document.getElementById('signupConfirmPassword').addEventListener('input', function() {
+                const password = document.getElementById('signupPassword').value;
+                const errorDiv = document.getElementById('confirmError');
+                if (this.value && this.value !== password) {
+                    errorDiv.textContent = '✗ Passwords do not match';
+                    this.style.borderColor = '#ff4444';
+                } else {
+                    errorDiv.textContent = '';
+                    this.style.borderColor = '';
+                }
+            });
+
+            // Avatar upload
+            document.getElementById('avatarInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please upload an image file', 'error');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Image size must be less than 2MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('avatarImage').src = ev.target.result;
+                    showToast('Avatar uploaded successfully!');
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // ============================================================
+        //  GLOBAL EXPORTS
+        // ============================================================
+        window.handleSignup = handleSignup;
+        window.togglePassword = togglePassword;
+        window.generateRollNumber = generateRollNumber;
+        window.loadServersDropdown = loadServersDropdown;
+        window.updateServerCodeDisplay = updateServerCodeDisplay;
+        window.showToast = showToast;
+    </script>
+</body>
+</html>

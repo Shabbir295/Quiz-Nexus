@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Theme Meta Tag -->
+<meta name="theme-color" content="#0b1a0e">
+    <!-- Prevent page zoom and scroll issues -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- Theme Color for Mobile -->
+<meta name="theme-color" content="#00e676">
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard · QuizNexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 20%, #132b17, #051007);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e2f0e5;
+        }
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            padding: 16px;
+            gap: 16px;
+        }
+        .glass {
+            background: rgba(15, 32, 19, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 28px;
+            transition: 0.3s;
+        }
+        .glass:hover { border-color: rgba(0, 230, 118, 0.3); }
+        .sidebar {
+            width: 240px;
+            padding: 24px 16px;
+            position: sticky;
+            top: 16px;
+            height: calc(100vh - 32px);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.15);
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            background: #00e676;
+            color: #0b1a0e;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        .logo-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #e2f0e5;
+        }
+        .logo-name .accent { color: #00e676; }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            color: #8fb89a;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .nav-item:hover { background: rgba(0, 230, 118, 0.08); color: #e2f0e5; }
+        .nav-item.active { background: rgba(0, 230, 118, 0.12); color: #00e676; }
+        .nav-item i { width: 20px; text-align: center; }
+        .main-content {
+            flex: 1;
+            padding: 0 8px 20px;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dashboard-header h1 { font-size: 2rem; font-weight: 700; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 60px;
+            border: 1.5px solid rgba(0, 255, 100, 0.15);
+            background: rgba(0, 0, 0, 0.2);
+            color: #e2f0e5;
+            font-family: 'Inter', sans-serif;
+            min-width: 200px;
+        }
+        .search-input:focus { border-color: #00e676; outline: none; }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #e2f0e5;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover { background: rgba(0, 230, 118, 0.1); border-color: #00e676; }
+        .leaderboard-container { padding: 28px; }
+        .leaderboard-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            border-radius: 60px;
+            border: 1.5px solid rgba(0, 255, 100, 0.15);
+            background: transparent;
+            color: #8fb89a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active,
+        .filter-btn:hover { border-color: #00e676; color: #e2f0e5; background: rgba(0, 230, 118, 0.05); }
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            transition: 0.3s;
+        }
+        .leaderboard-item:hover { background: rgba(0, 230, 118, 0.04); }
+        .leaderboard-item .rank {
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 36px;
+        }
+        .leaderboard-item .rank.gold { color: #ffd700; }
+        .leaderboard-item .rank.silver { color: #c0c0c0; }
+        .leaderboard-item .rank.bronze { color: #cd7f32; }
+        .leaderboard-item .user-info { flex: 1; }
+        .leaderboard-item .user-info .name { font-weight: 600; }
+        .leaderboard-item .user-info .detail { font-size: 0.8rem; color: #8fb89a; }
+        .leaderboard-item .score { font-weight: 700; color: #00e676; }
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+        }
+        .toast {
+            background: rgba(20, 40, 25, 0.92);
+            backdrop-filter: blur(14px);
+            border-left: 4px solid #00e676;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #e2f0e5;
+            margin-top: 10px;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            .app-layout { flex-direction: column; padding: 10px; }
+            .sidebar { width: 100%; height: auto; position: relative; top: 0; padding: 16px; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .nav-item { padding: 6px 12px; font-size: 0.85rem; }
+            .leaderboard-filters { flex-direction: column; }
+            .filter-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="app-layout">
+        <aside class="sidebar glass">
+            <div class="sidebar-brand">
+                <img src="assets/images/logo.png" alt="QuizNexus" style="width:40px;height:40px;object-fit:contain;border-radius:10px;">
+                <span class="logo-name">Quiz<span class="accent">Nexus</span></span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="quiz.html" class="nav-item"><i class="fas fa-play-circle"></i> Available Quiz</a>
+                <a href="result.html" class="nav-item"><i class="fas fa-chart-bar"></i> My Results</a>
+                <a href="leaderboard.html" class="nav-item active"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>🏆 Leaderboard</h1>
+                <div class="header-actions">
+                    <input type="text" id="searchLeaderboard" placeholder="Search users..." class="search-input" oninput="filterLeaderboard(this.value)">
+                    <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                </div>
+            </header>
+
+            <div class="leaderboard-container glass">
+                <div class="leaderboard-filters">
+                    <button class="filter-btn active" onclick="sortLeaderboard('score')">Sort by Score</button>
+                    <button class="filter-btn" onclick="sortLeaderboard('quizzes')">Sort by Quizzes</button>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const DB = {
+            USERS: 'quiznexus_users',
+            RESULTS: 'quiznexus_results',
+            SETTINGS: 'quiznexus_settings',
+            CURRENT_USER: 'quiznexus_current_user',
+            getUsers() { return JSON.parse(localStorage.getItem(this.USERS)) || []; },
+            getResults() { return JSON.parse(localStorage.getItem(this.RESULTS)) || []; },
+            getCurrentUser() {
+                const data = localStorage.getItem(this.CURRENT_USER);
+                return data ? JSON.parse(data) : null;
+            },
+            clearCurrentUser() { localStorage.removeItem(this.CURRENT_USER); },
+            getSettings() {
+                return JSON.parse(localStorage.getItem(this.SETTINGS)) || { theme: 'dark' };
+            },
+            saveSettings(settings) { localStorage.setItem(this.SETTINGS, JSON.stringify(settings)); }
+        };
+
+        let leaderboardData = [];
+        let currentSort = 'score';
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        function redirectTo(page) { window.location.href = page; }
+
+        function logout() {
+            DB.clearCurrentUser();
+            showToast('Logged out successfully');
+            setTimeout(() => redirectTo('login.html'), 400);
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-toggle i').forEach(icon => {
+                icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            });
+            document.body.style.background = theme === 'light' ? 'radial-gradient(ellipse at 20% 20%, #e8f5e9, #c8e6c9)' : 'radial-gradient(circle at 20% 20%, #132b17, #051007)';
+        }
+
+        function loadLeaderboard() {
+            const users = DB.getUsers();
+            const results = DB.getResults();
+            leaderboardData = users.map(user => {
+                const userResults = results.filter(r => r.userId === user.id);
+                return {
+                    ...user,
+                    totalScore: userResults.reduce((sum, r) => sum + r.score, 0),
+                    avgPercentage: userResults.length > 0 ? (userResults.reduce((sum, r) => sum + r.percentage, 0) / userResults.length) : 0,
+                    quizzesTaken: userResults.length,
+                    highestScore: userResults.length > 0 ? Math.max(...userResults.map(r => r.score)) : 0
+                };
+            });
+            sortLeaderboard(currentSort);
+        }
+
+        function sortLeaderboard(sortBy) {
+            currentSort = sortBy;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(sortBy));
+            });
+            if (sortBy === 'score') leaderboardData.sort((a, b) => b.totalScore - a.totalScore);
+            else if (sortBy === 'quizzes') leaderboardData.sort((a, b) => b.quizzesTaken - a.quizzesTaken);
+            renderLeaderboard(leaderboardData);
+        }
+
+        function filterLeaderboard(query) {
+            const filtered = leaderboardData.filter(user =>
+                user.fullName.toLowerCase().includes(query.toLowerCase()) ||
+                user.rollNumber.toLowerCase().includes(query.toLowerCase())
+            );
+            renderLeaderboard(filtered);
+        }
+
+        function renderLeaderboard(users) {
+            const container = document.getElementById('leaderboardList');
+            if (!container) return;
+            if (users.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:40px;color:#8fb89a;">No users found</p>';
+                return;
+            }
+            container.innerHTML = users.map((user, index) => {
+                let rankClass = '', medalIcon = '';
+                if (index === 0) { rankClass = 'gold'; medalIcon = '🥇'; }
+                else if (index === 1) { rankClass = 'silver'; medalIcon = '🥈'; }
+                else if (index === 2) { rankClass = 'bronze'; medalIcon = '🥉'; }
+                return `
+                    <div class="leaderboard-item glass" style="margin-bottom:8px;padding:16px 20px;">
+                        <div class="rank ${rankClass}">${medalIcon || `#${index + 1}`}</div>
+                        <div class="user-info">
+                            <div class="name">${user.fullName}</div>
+                            <div class="detail">${user.rollNumber} · ${user.quizzesTaken} quizzes taken</div>
+                        </div>
+                        <div class="score">${user.totalScore} pts<div style="font-size:0.75rem;color:#8fb89a;">${user.avgPercentage.toFixed(1)}% avg</div></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleTheme() {
+            const settings = DB.getSettings();
+            const newTheme = settings.theme === 'dark' ? 'light' : 'dark';
+            settings.theme = newTheme;
+            DB.saveSettings(settings);
+            applyTheme(newTheme);
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            const particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.2
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 230, 118, ${p.opacity})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = DB.getCurrentUser();
+            if (!currentUser) { redirectTo('login.html'); return; }
+            const settings = DB.getSettings();
+            if (settings.theme) applyTheme(settings.theme);
+            initParticles();
+            loadLeaderboard();
+        });
+
+        window.sortLeaderboard = sortLeaderboard;
+        window.filterLeaderboard = filterLeaderboard;
+        window.toggleTheme = toggleTheme;
+        window.logout = logout;
+    </script>
+</body>
+</html>
