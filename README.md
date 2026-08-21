@@ -71,5 +71,6 @@ Quiz-Nexus/
 **Shabbir**
 
 ## 📄 License
+THankyou For your Patience and Support
 
 This project is created for learning and development purposes.
